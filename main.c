@@ -1,12 +1,12 @@
 /** main.c
  * ===========================================================
- * Name: _______________________, __ ___ 2026
- * Section: CS483 / ____
+ * Name: mark alano, 20 april 2026
+ * Section: CS483 / m3
  * Project: PEX3 - Page Replacement Simulator
  * Purpose: Reads a BYU binary memory trace file and simulates
  *          LRU page replacement to measure fault rates across
  *          varying frame allocations.
- * Documentation: TBD
+ * Documentation: citations are on site; my DLL from the lab in 220 contains code provided or edited by chat
  * =========================================================== */
 #include <stdio.h>
 #include <stdlib.h>
