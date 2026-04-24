@@ -6,7 +6,7 @@
  * Purpose: Reads a BYU binary memory trace file and simulates
  *          LRU page replacement to measure fault rates across
  *          varying frame allocations.
- * Documentation: citations are on site; my DLL from the lab in 220 contains code provided or edited by chat
+ * Documentation: citations are on site
  * =========================================================== */
 #include <stdio.h>
 #include <stdlib.h>
@@ -72,6 +72,11 @@ int main(int argc, char **argv) {
     //       total number of page faults that occur when f frames are
     //       available.  Use calloc so all entries start at zero.
 
+        PageQueue *pq = pqInit(maxFrames);
+
+        //include up to maxFrames
+        unsigned long *faults = calloc(maxFrames + 1, sizeof(unsigned long));
+
     // Process each memory access from the trace file
     while (!feof(ifp)) {
         fread(&traceRecord, sizeof(p2AddrTr), 1, ifp);
@@ -94,6 +99,24 @@ int main(int argc, char **argv) {
         //
         //       Update faults[] accordingly.
 
+        long d = pqAccess(pq, pageNum);
+
+        //miss
+        if(d == -1){
+
+            for(int f = 1; f <= maxFrames; ++f){
+                
+                ++faults[f];
+            }
+        }
+        //hit
+        else{
+
+            for( int f = 1; f <= d; ++f){
+
+                ++faults[f];
+            }
+        }
     }
 
     fprintf(stderr, "\n%lu total accesses processed\n", numAccesses);
@@ -103,11 +126,23 @@ int main(int argc, char **argv) {
     printf("Frames,Missees,Miss Rate\n");
 
     // TODO: Loop from frame count 1 to maxFrames and print each row:
-    //       printf("%d,%lu,%f\n", frameCount, faults[frameCount],
-    //              (double)faults[frameCount] / (double)numAccesses);
+
+
+    for(int frameCount = 1; frameCount <= maxFrames; ++frameCount){
+
+       printf("%d,%lu,%f\n", frameCount, faults[frameCount],
+              (double)faults[frameCount] / (double)numAccesses);
+    }
 
     // TODO: Free your PageQueue and the faults[] array,
     //       then close the file.
+    // file is ifp
+
+    pqFree(pq);
+    free(faults);
+
+    //https://www.geeksforgeeks.org/c/fclose-function-in-c/ 
+    fclose(ifp);
 
     return 0;
 }
